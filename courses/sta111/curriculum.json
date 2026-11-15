@@ -1,0 +1,191 @@
+{
+  "course_id": "sta111",
+  "topics": [
+    {
+      "topic_id": "topic_1",
+      "topic_title": "Foundations of Statistics",
+      "concepts": [
+        {
+          "id": "1.1",
+          "title": "What Statistics Really Is",
+          "learning_goal": "Understand statistics as collecting, organizing, and making sense of data to answer questions instead of guessing.",
+          "key_idea": "Statistics turns messy raw facts into clear insight so we can see patterns and make smart decisions.",
+          "suggested_example": "A shop owner notes daily sales for a month to see which snack sells fastest instead of guessing.",
+          "check_prompt": "In one short sentence, what problem does statistics help us solve?",
+          "prerequisites": []
+        },
+        {
+          "id": "1.2",
+          "title": "Descriptive Statistics",
+          "learning_goal": "Understand descriptive statistics as summarizing only the exact data you already have.",
+          "key_idea": "Descriptive statistics simply organizes and summarizes the exact data in front of you—nothing beyond it.",
+          "suggested_example": "Finding the average score or highest score of the 40 students in your own class.",
+          "check_prompt": "If a teacher finds the highest and lowest scores in her class of 40 students, is she describing her data or guessing about another school?",
+          "prerequisites": ["1.1"]
+        },
+        {
+          "id": "1.2b",
+          "title": "Inferential Statistics",
+          "learning_goal": "Understand inferential statistics as using a small sample to draw conclusions about a much larger group.",
+          "key_idea": "Inferential statistics goes a step further: you study a small group and use it to make an educated conclusion about a bigger group you didn't measure.",
+          "suggested_example": "Tasting 5 mangoes from a truckload to judge whether the whole truck is sweet.",
+          "check_prompt": "If you ask 20 students at your faculty about their favorite course and conclude most students on campus agree, is that descriptive or inferential?",
+          "prerequisites": ["1.2"]
+        },
+        {
+          "id": "1.3",
+          "title": "Population vs. Sample",
+          "learning_goal": "Tell the difference between a population (every member of interest) and a sample (the smaller portion actually studied).",
+          "key_idea": "A population is the entire group you care about; a sample is the smaller slice you actually inspect.",
+          "suggested_example": "All 10,000 students at a university are the population; 200 surveyed students are the sample.",
+          "check_prompt": "If you ask 25 classmates how much data they buy weekly to learn about your whole department, which group is the sample?",
+          "prerequisites": ["1.2b"]
+        },
+        {
+          "id": "1.4",
+          "title": "Qualitative vs. Quantitative Data",
+          "learning_goal": "Classify data as qualitative (categories/labels) or quantitative (meaningful numbers).",
+          "key_idea": "Qualitative data gives labels or categories, while quantitative data gives numerical counts or measurements.",
+          "suggested_example": "Your favorite phone brand is qualitative; your exam score is quantitative.",
+          "check_prompt": "Between a student's blood group (O, A, B) and their height in centimeters, which one is quantitative?",
+          "prerequisites": ["1.1"]
+        },
+        {
+          "id": "1.5",
+          "title": "Discrete vs. Continuous Data",
+          "learning_goal": "Separate countable whole-step data (discrete) from measured data with decimals in between (continuous).",
+          "key_idea": "Discrete data comes from counting whole steps (like 1, 2, 3 people); continuous data comes from measuring and can take values in between (like 1.72 meters).",
+          "suggested_example": "The number of passengers in a bus is discrete; the exact weight of a bag of rice is continuous.",
+          "check_prompt": "Is the number of goals scored in a football match discrete or continuous, and why?",
+          "prerequisites": ["1.4"]
+        }
+      ]
+    },
+    {
+      "topic_id": "topic_2",
+      "topic_title": "Organizing & Visualizing Data",
+      "concepts": [
+        {
+          "id": "2.1",
+          "title": "Raw Data & Frequency Tables",
+          "learning_goal": "Understand how a frequency table turns an unsorted list of raw data into clear counts.",
+          "key_idea": "A frequency table lists each value or category alongside how many times it appears.",
+          "suggested_example": "Writing 'A: 4, B: 7, C: 5' instead of staring at 16 scattered quiz grades.",
+          "check_prompt": "If 5 students pick their drink as Tea, Coffee, Tea, Water, Tea, what is the frequency of Tea?",
+          "prerequisites": ["1.4"]
+        },
+        {
+          "id": "2.2",
+          "title": "Grouped Frequency Distributions",
+          "learning_goal": "Understand why we group wide ranges of numerical data into class intervals.",
+          "key_idea": "When numbers span a wide range, we group them into neat ranges called class intervals (like 40-49, 50-59) so patterns pop out.",
+          "suggested_example": "Grouping 100 exam scores into 10-point bands instead of listing every score from 0 to 100.",
+          "check_prompt": "Why is grouping 100 exam scores into bands like 50-59 and 60-69 better than listing every individual number?",
+          "prerequisites": ["2.1"]
+        },
+        {
+          "id": "2.3",
+          "title": "Choosing the Right Chart",
+          "learning_goal": "Match basic charts (bar chart vs. histogram) to categorical or grouped numerical data.",
+          "key_idea": "Bar charts show separate categories with gaps between bars, while histograms show continuous numerical intervals with bars touching.",
+          "suggested_example": "A bar chart for favorite drinks; a histogram for student heights grouped into intervals.",
+          "check_prompt": "To display how many students walk, bike, or take a bus, should we use a bar chart or a histogram?",
+          "prerequisites": ["1.4", "2.2"]
+        }
+      ]
+    },
+    {
+      "topic_id": "topic_3",
+      "topic_title": "Measures of Central Tendency",
+      "concepts": [
+        {
+          "id": "3.1",
+          "title": "The Arithmetic Mean",
+          "learning_goal": "Compute the arithmetic mean and see how one extreme value pulls it.",
+          "key_idea": "The mean adds all values and divides equally by how many there are—so one giant number can pull the whole average upward.",
+          "suggested_example": "For 4, 6, and 8, the mean is (4 + 6 + 8) / 3 = 6.",
+          "check_prompt": "What is the mean of 2, 4, and 6—and what happens to it if we change 6 to 60?",
+          "prerequisites": ["1.1"]
+        },
+        {
+          "id": "3.2",
+          "title": "The Median",
+          "learning_goal": "Find the median by ordering values first and understand why it resists outliers.",
+          "key_idea": "The median is the middle value after sorting numbers from smallest to largest, so extreme ends don't disturb it.",
+          "suggested_example": "In 2, 5, 9, 10, 100, the middle number is 9 even with 100 at the end.",
+          "check_prompt": "What is the median of 12, 3, 7, 15, 5? (Remember to sort them first!)",
+          "prerequisites": ["3.1"]
+        },
+        {
+          "id": "3.3",
+          "title": "The Mode",
+          "learning_goal": "Identify the mode and see why it works even for non-number data.",
+          "key_idea": "The mode is simply the value that appears most often—and it even works for categories like colors or shoe sizes.",
+          "suggested_example": "In shoe sizes 39, 41, 41, 42, 41, the mode is 41.",
+          "check_prompt": "In [Blue, Red, Blue, Green, Blue], what is the mode, and why can't we find a mean here?",
+          "prerequisites": ["2.1"]
+        },
+        {
+          "id": "3.4",
+          "title": "Choosing Mean, Median, or Mode",
+          "learning_goal": "Choose between mean, median, and mode depending on outliers or categories.",
+          "key_idea": "Use mean for balanced numbers, median when extreme outliers exist, and mode for the most popular category.",
+          "suggested_example": "In a street where 9 workers earn normal wages and 1 billionaire lives, the median shows the typical income honestly.",
+          "check_prompt": "If 5 friends have pocket money of 10, 12, 11, 13, and 500, should we use the mean or median to show a typical amount?",
+          "prerequisites": ["3.1", "3.2", "3.3"]
+        }
+      ]
+    },
+    {
+      "topic_id": "topic_4",
+      "topic_title": "Measures of Dispersion (Spread)",
+      "concepts": [
+        {
+          "id": "4.1",
+          "title": "Why Spread Matters & The Range",
+          "learning_goal": "See why averages alone can mislead and compute the range (max - min).",
+          "key_idea": "Two classes can share the same average of 60 while one is tightly packed and the other is wildly spread out; the range (largest minus smallest) gives a quick look at spread.",
+          "suggested_example": "Scores [58, 60, 62] have range 4, while [20, 60, 100] have range 80, even though both average 60.",
+          "check_prompt": "What is the range of [15, 22, 18, 40, 25]?",
+          "prerequisites": ["3.1"]
+        },
+        {
+          "id": "4.2",
+          "title": "Deviations from the Mean",
+          "learning_goal": "Understand how far each score sits from the mean and why signed deviations cancel to zero.",
+          "key_idea": "A deviation (value minus mean) shows how far above or below average a score sits, and positive and negative deviations always cancel out to zero.",
+          "suggested_example": "For [2, 4, 6] with mean 4, the deviations are -2, 0, and +2, which add up to 0.",
+          "check_prompt": "For [3, 5, 7] where the mean is 5, what are the three deviations from 5?",
+          "prerequisites": ["3.1", "4.1"]
+        },
+        {
+          "id": "4.3",
+          "title": "Variance Intuition",
+          "learning_goal": "Understand why we square deviations before averaging them to get the variance.",
+          "key_idea": "Because positive and negative deviations cancel to zero, we square each deviation first (making all positive) and average them—that is the variance.",
+          "suggested_example": "For deviations -2, 0, +2, squaring turns them into 4, 0, 4, so they no longer cancel out.",
+          "check_prompt": "In plain words, why do we square the deviations when calculating variance?",
+          "prerequisites": ["4.2"]
+        },
+        {
+          "id": "4.3b",
+          "title": "Standard Deviation",
+          "learning_goal": "Understand standard deviation as the square root of variance, bringing spread back to original units.",
+          "key_idea": "Squaring deviations leaves us in squared units (like squared scores), so taking the square root brings us back to normal units—giving the typical distance from the mean.",
+          "suggested_example": "If heights are in cm, variance is in cm squared, so taking the square root gives standard deviation back in cm.",
+          "check_prompt": "Why do we take the square root of the variance to get the standard deviation?",
+          "prerequisites": ["4.3"]
+        },
+        {
+          "id": "4.4",
+          "title": "Quartiles & Interquartile Range (IQR)",
+          "learning_goal": "Understand IQR (Q3 - Q1) as the spread of the middle 50% of ordered data.",
+          "key_idea": "Quartiles split sorted data into four quarters, and IQR (Q3 minus Q1) measures how spread out the middle half is while ignoring wild outliers.",
+          "suggested_example": "Looking at the middle 50% of clinic waiting times avoids distortion from one rare 5-hour emergency delay.",
+          "check_prompt": "Why is IQR often safer than the full Range when data has one extreme outlier?",
+          "prerequisites": ["3.2", "4.1"]
+        }
+      ]
+    }
+  ]
+}

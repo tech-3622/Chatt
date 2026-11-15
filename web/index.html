@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Adaptive AI University</title>
+  <style>
+    :root {
+      --bg:#0f172a; --panel:#1e293b; --panel2:#334155; --text:#f1f5f9;
+      --muted:#94a3b8; --accent:#38bdf8; --btn:#0284c7; --green:#22c55e;
+      --rose:#fb7185; --me:#0369a1; --peer:#312e81;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      background:var(--bg); color:var(--text); height:100dvh;
+      display:flex; flex-direction:column; overflow:hidden;
+    }
+    .screen { display:none; flex:1; flex-direction:column; height:100%; overflow:hidden; }
+    .screen.active { display:flex; }
+    .center { flex:1; display:flex; align-items:center; justify-content:center; padding:18px; overflow-y:auto; }
+    .dash { flex:1; overflow-y:auto; padding:16px; max-width:540px; width:100%; margin:0 auto; }
+    .card { background:var(--panel); border:1px solid #334155; border-radius:16px; width:100%; max-width:420px; padding:20px; }
+    .dcard { background:var(--panel); border:1px solid #334155; border-radius:14px; padding:16px; margin-bottom:14px; }
+    h1 { font-size:20px; margin-bottom:6px; }
+    h2.st { font-size:15px; margin-bottom:8px; color:var(--accent); }
+    p.sub { font-size:13px; color:var(--muted); margin-bottom:14px; line-height:1.4; }
+    .tabs { display:flex; gap:6px; margin-bottom:14px; }
+    .tab { flex:1; padding:9px; border-radius:8px; border:none; background:var(--bg); color:var(--muted); font-weight:600; cursor:pointer; }
+    .tab.active { background:var(--btn); color:#fff; }
+    .field { margin-bottom:12px; }
+    .field label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+    .field input, .join-row input {
+      width:100%; background:var(--bg); color:var(--text); border:1px solid #334155;
+      border-radius:10px; padding:10px 12px; font-size:15px; outline:none;
+    }
+    .field input:focus, .join-row input:focus { border-color:var(--accent); }
+    .pbtn { width:100%; background:var(--btn); color:#fff; border:none; border-radius:10px; padding:11px; font-size:14px; font-weight:700; cursor:pointer; }
+    .sbtn { background:var(--panel2); color:var(--text); border:none; border-radius:8px; padding:8px 12px; font-size:13px; font-weight:600; cursor:pointer; }
+    .smbtn { background:var(--btn); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .lbtn { background:none; border:none; color:var(--muted); font-size:13px; margin-top:12px; cursor:pointer; text-decoration:underline; }
+    .err { color:var(--rose); font-size:13px; margin-bottom:10px; min-height:18px; }
+    .dtop { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:8px; }
+    .join-row { display:flex; gap:8px; margin-bottom:10px; }
+    .ritem { display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--bg); border:1px solid #334155; border-radius:10px; padding:10px 12px; margin-top:8px; }
+    .rbadge { display:inline-block; background:rgba(56,189,248,0.15); border:1px solid rgba(56,189,248,0.4); color:var(--accent); padding:4px 10px; border-radius:999px; font-weight:700; font-size:13px; margin-bottom:10px; }
+    .mlist { background:var(--bg); border:1px solid #334155; border-radius:10px; padding:10px 12px; margin:12px 0; }
+    .mitem { display:flex; justify-content:space-between; font-size:14px; padding:4px 0; }
+    header { background:var(--panel); border-bottom:1px solid #334155; padding:10px 14px; flex-shrink:0; }
+    .htop { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .ctitle { font-size:14px; font-weight:700; }
+    .csub { font-size:12px; color:var(--accent); margin-top:2px; }
+    .ibtn { background:var(--panel2); color:var(--text); border:none; border-radius:8px; padding:6px 10px; font-size:12px; font-weight:600; cursor:pointer; }
+    .pwrap { margin-top:8px; display:flex; align-items:center; gap:8px; }
+    .pbar { flex:1; height:6px; background:#0f172a; border-radius:999px; overflow:hidden; }
+    .pfill { height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--green)); transition:width .3s; }
+    .plabel { font-size:11px; color:var(--muted); white-space:nowrap; }
+    .peers { display:none; margin-top:8px; gap:6px; flex-wrap:wrap; }
+    .peers.visible { display:flex; }
+    .pill { font-size:11px; padding:3px 8px; border-radius:999px; background:var(--bg); border:1px solid #334155; color:var(--muted); }
+    .pill.done { border-color:rgba(34,197,94,0.5); color:#86efac; }
+    .rbanner { display:none; margin-top:8px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); color:#fde68a; padding:6px 10px; border-radius:8px; font-size:12px; }
+    #chat { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:12px; }
+    .mrow { display:flex; flex-direction:column; max-width:88%; }
+    .mrow.ai { align-self:flex-start; }
+    .mrow.me { align-self:flex-end; }
+    .mrow.peer { align-self:flex-start; }
+    .msender { font-size:11px; color:var(--muted); margin-bottom:3px; padding:0 4px; }
+    .mrow.me .msender { text-align:right; }
+    .bubble { padding:11px 14px; border-radius:14px; font-size:15px; line-height:1.48; white-space:pre-wrap; word-wrap:break-word; }
+    .mrow.ai .bubble { background:var(--panel); border:1px solid #334155; border-bottom-left-radius:4px; }
+    .mrow.me .bubble { background:var(--me); border-bottom-right-radius:4px; }
+    .mrow.peer .bubble { background:var(--peer); border:1px solid #4338ca; border-bottom-left-radius:4px; }
+    .wbar { display:none; background:rgba(56,189,248,0.12); border-top:1px solid rgba(56,189,248,0.3); padding:8px 12px; font-size:12px; color:#bae6fd; justify-content:space-between; align-items:center; gap:8px; }
+    .wbar.visible { display:flex; }
+    .typing { font-size:13px; color:var(--muted); font-style:italic; padding:4px 14px; display:none; }
+    footer { background:var(--panel); border-top:1px solid #334155; padding:10px 12px; flex-shrink:0; }
+    .comp { display:flex; gap:8px; align-items:flex-end; }
+    textarea { flex:1; background:var(--bg); color:var(--text); border:1px solid #334155; border-radius:12px; padding:10px 12px; font-size:15px; font-family:inherit; resize:none; max-height:110px; line-height:1.35; outline:none; }
+    textarea:focus { border-color:var(--accent); }
+    #sendBtn { background:var(--btn); color:#fff; border:none; border-radius:12px; padding:11px 16px; font-size:14px; font-weight:700; cursor:pointer; }
+    #sendBtn:disabled { opacity:0.5; cursor:not-allowed; }
+    .mbg { display:none; position:fixed; inset:0; background:rgba(2,6,23,0.78); z-index:50; align-items:center; justify-content:center; padding:16px; }
+    .mbg.open { display:flex; }
+    .modal { background:var(--panel); border:1px solid #475569; border-radius:16px; width:100%; max-width:440px; max-height:85dvh; overflow-y:auto; padding:18px; }
+    .modal h2 { font-size:17px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+    .sgrp { margin-bottom:12px; }
+    .slabel { font-size:12px; color:var(--muted); margin-bottom:4px; }
+    .clist { display:flex; flex-wrap:wrap; gap:6px; }
+    .chip { font-size:12px; padding:4px 8px; border-radius:8px; background:var(--bg); border:1px solid #334155; }
+    .chip.mastered { border-color:rgba(34,197,94,0.5); color:#86efac; }
+    .chip.difficult { border-color:rgba(251,113,133,0.5); color:#fda4af; }
+    .dbtn { background:rgba(251,113,133,0.2); color:#fda4af; border:1px solid rgba(251,113,133,0.4); border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <section class="screen active" id="authScreen">
+    <div class="center">
+      <div class="card">
+        <h1>Adaptive AI University</h1>
+        <p class="sub">Register or log in to open your student dashboard.</p>
+        <div class="tabs">
+          <button class="tab active" id="tabRegister">Register</button>
+          <button class="tab" id="tabLogin">Log In</button>
+        </div>
+        <div class="err" id="authError"></div>
+        <div class="field"><label>Username</label><input type="text" id="authUsername" placeholder="e.g. tunde" autocomplete="off" /></div>
+        <div class="field" id="displayNameWrap"><label>Your Name</label><input type="text" id="authDisplayName" placeholder="e.g. Tunde" autocomplete="off" /></div>
+        <div class="field"><label>PIN / Password (min 3 chars)</label><input type="password" id="authPin" placeholder="e.g. 1234" /></div>
+        <button class="pbtn" id="authSubmitBtn">Register &amp; Open Dashboard</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="dashboardScreen">
+    <div class="dash">
+      <div class="dtop">
+        <div><h1 id="dashWelcome">Welcome</h1><p class="sub" id="dashUserMeta" style="margin:0;">@student</p></div>
+        <button class="sbtn" id="logoutBtn">Log Out</button>
+      </div>
+      <div class="dcard">
+        <h2 class="st" id="dashCourseTitle">STA 111 — Descriptive Statistics</h2>
+        <p class="sub" id="dashCourseDesc" style="margin-bottom:10px;">Loading...</p>
+        <div class="pwrap" style="margin-bottom:12px;">
+          <div class="pbar"><div class="pfill" id="dashProgressFill"></div></div>
+          <div class="plabel" id="dashProgressLabel">0 / 0 mastered</div>
+        </div>
+        <button class="pbtn" id="startSoloBtn">Start / Resume Solo 1-on-1 Lecture</button>
+      </div>
+      <div class="dcard">
+        <h2 class="st">2-Student Shared Classroom</h2>
+        <p class="sub" style="margin-bottom:10px;">Create a room or join your classmate's room. Class starts once 2 students join.</p>
+        <div class="err" id="dashRoomError" style="margin-bottom:8px;"></div>
+        <div class="join-row">
+          <input type="text" id="roomCodeInput" value="STA1" placeholder="Room code e.g. STA1" />
+          <button class="smbtn" id="createJoinRoomBtn">Create / Join</button>
+        </div>
+        <div class="slabel" style="margin-top:8px;">Open &amp; Your Classrooms</div>
+        <div id="roomsList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="waitingScreen">
+    <div class="center">
+      <div class="card">
+        <div class="rbadge" id="waitingRoomBadge">ROOM: STA1 (1/2)</div>
+        <h1>Waiting for 2nd Student...</h1>
+        <p class="sub">Open a 2nd incognito tab, register/log in as Student 2, and tap Join on your Dashboard. Class starts automatically.</p>
+        <div class="mlist" id="waitingMembers"></div>
+        <button class="lbtn" id="leaveWaitingBtn">Back to Dashboard</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="lectureScreen">
+    <header>
+      <div class="htop">
+        <div>
+          <div class="ctitle" id="courseTitle">STA 111 — Descriptive Statistics</div>
+          <div class="csub" id="conceptLabel">Loading...</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="ibtn" id="dashNavBtn">Dashboard</button>
+          <button class="ibtn" id="progressBtn">Progress</button>
+        </div>
+      </div>
+      <div class="pwrap">
+        <div class="pbar"><div class="pfill" id="progressFill"></div></div>
+        <div class="plabel" id="progressLabel">0 / 0</div>
+      </div>
+      <div class="peers" id="peersBar"></div>
+      <div class="rbanner" id="remediationBanner">Building a quick foundation first before returning to your main concept.</div>
+    </header>
+    <main id="chat"></main>
+    <div class="typing" id="typing">Lecturer is thinking...</div>
+    <div class="wbar" id="waitingBar">
+      <span id="waitingBarText">Waiting for your classmate...</span>
+      <button class="ibtn" id="forceContinueBtn">Continue anyway</button>
+    </div>
+    <footer>
+      <div class="comp">
+        <textarea id="input" rows="1" placeholder="Type your reply..."></textarea>
+        <button id="sendBtn">Send</button>
+      </div>
+    </footer>
+  </section>
+
+  <div class="mbg" id="modalBackdrop">
+    <div class="modal">
+      <h2><span>Personal Progress</span><button class="sbtn" id="closeModalBtn">Close</button></h2>
+      <div class="sgrp"><div class="slabel">Mastered Concepts</div><div class="clist" id="masteredList"></div></div>
+      <div class="sgrp"><div class="slabel">Needs Practice (Difficult)</div><div class="clist" id="difficultList"></div></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+        <button class="dbtn" id="resetBtn">Reset This Class</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let appMode = sessionStorage.getItem('appMode') || '';
+    let authToken = sessionStorage.getItem('authToken') || '';
+    let currentRoomCode = sessionStorage.getItem('roomCode') || '';
+    let currentUser = null, isRegister = true, dashTimer = null, roomTimer = null, lastKey = '', busy = false;
+
+    const screens = {
+      auth: document.getElementById('authScreen'),
+      dashboard: document.getElementById('dashboardScreen'),
+      waiting: document.getElementById('waitingScreen'),
+      lecture: document.getElementById('lectureScreen')
+    };
+    const chatEl = document.getElementById('chat'), inputEl = document.getElementById('input'),
+          sendBtn = document.getElementById('sendBtn'), typingEl = document.getElementById('typing'),
+          waitingBar = document.getElementById('waitingBar'), waitingBarText = document.getElementById('waitingBarText'),
+          peersBar = document.getElementById('peersBar'), remediationBanner = document.getElementById('remediationBanner'),
+          modalBackdrop = document.getElementById('modalBackdrop');
+
+    function showScreen(n) { Object.values(screens).forEach(s => s.classList.remove('active')); screens[n].classList.add('active'); }
+    function stopTimers() { if (dashTimer) { clearInterval(dashTimer); dashTimer = null; } if (roomTimer) { clearInterval(roomTimer); roomTimer = null; } }
+    function authHeaders() { return { 'Content-Type': 'application/json', 'X-Session-Token': authToken }; }
+
+    function renderChips(id, items, cls) {
+      const el = document.getElementById(id); el.innerHTML = '';
+      if (!items || !items.length) { el.innerHTML = '<span class="chip">None yet</span>'; return; }
+      items.forEach(i => { const s = document.createElement('span'); s.className = 'chip ' + (cls || ''); s.textContent = i; el.appendChild(s); });
+    }
+
+    function notice(text) {
+      const row = document.createElement('div'); row.className = 'mrow ai';
+      const b = document.createElement('div'); b.className = 'bubble'; b.style.borderColor = '#fb7185'; b.textContent = text;
+      row.appendChild(b); chatEl.appendChild(row); chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function renderMessages(messages, myId) {
+      const last = messages[messages.length - 1];
+      const key = appMode + ':' + currentRoomCode + ':' + messages.length + ':' + (last ? (last.id || last.content) : '');
+      if (key === lastKey) return;
+      lastKey = key; chatEl.innerHTML = '';
+      messages.forEach(m => {
+        const row = document.createElement('div');
+        let kind = 'ai', label = m.sender_name || 'STA 111 Lecturer';
+        if (m.role === 'user') {
+          if (appMode === 'solo' || (myId !== null && m.user_id === myId)) { kind = 'me'; label = 'You'; }
+          else { kind = 'peer'; }
+        }
+        row.className = 'mrow ' + kind;
+        const s = document.createElement('div'); s.className = 'msender'; s.textContent = label;
+        const b = document.createElement('div'); b.className = 'bubble'; b.textContent = m.content;
+        row.appendChild(s); row.appendChild(b); chatEl.appendChild(row);
+      });
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    document.getElementById('tabRegister').onclick = () => {
+      isRegister = true; document.getElementById('tabRegister').classList.add('active');
+      document.getElementById('tabLogin').classList.remove('active');
+      document.getElementById('displayNameWrap').style.display = 'block';
+      document.getElementById('authSubmitBtn').textContent = 'Register & Open Dashboard';
+      document.getElementById('authError').textContent = '';
+    };
+    document.getElementById('tabLogin').onclick = () => {
+      isRegister = false; document.getElementById('tabLogin').classList.add('active');
+      document.getElementById('tabRegister').classList.remove('active');
+      document.getElementById('displayNameWrap').style.display = 'none';
+      document.getElementById('authSubmitBtn').textContent = 'Log In to Dashboard';
+      document.getElementById('authError').textContent = '';
+    };
+    document.getElementById('authSubmitBtn').onclick = async () => {
+      const username = document.getElementById('authUsername').value.trim();
+      const display_name = document.getElementById('authDisplayName').value.trim();
+      const pin = document.getElementById('authPin').value.trim();
+      const err = document.getElementById('authError'); err.textContent = '';
+      const res = await fetch(isRegister ? '/api/auth/signup' : '/api/auth/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, display_name, pin })
+      });
+      const data = await res.json();
+      if (!res.ok) { err.textContent = data.error || 'Failed.'; return; }
+      authToken = data.token; currentUser = data.user; sessionStorage.setItem('authToken', authToken);
+      await openDashboard();
+    };
+
+    async function loadDashboard() {
+      const res = await fetch('/api/dashboard', { headers: authHeaders() });
+      if (!res.ok) { authToken = ''; sessionStorage.clear(); stopTimers(); showScreen('auth'); return; }
+      const d = await res.json(); currentUser = d.user;
+      document.getElementById('dashWelcome').textContent = 'Welcome, ' + d.user.display_name;
+      document.getElementById('dashUserMeta').textContent = '@' + d.user.username;
+      document.getElementById('dashCourseTitle').textContent = d.course.code + ' — ' + d.course.title;
+      document.getElementById('dashCourseDesc').textContent = d.course.description;
+      const tot = d.course.total_concepts || 1, mast = (d.progress.mastered || []).length;
+      document.getElementById('dashProgressFill').style.width = Math.min(100, Math.round((mast / tot) * 100)) + '%';
+      document.getElementById('dashProgressLabel').textContent = mast + ' / ' + tot + ' mastered';
+
+      const list = document.getElementById('roomsList'); list.innerHTML = '';
+      if (!d.rooms || !d.rooms.length) {
+        list.innerHTML = '<p class="sub" style="margin:6px 0 0;">No rooms open yet. Enter a code above to create one.</p>';
+      } else {
+        d.rooms.forEach(r => {
+          const item = document.createElement('div'); item.className = 'ritem';
+          const info = document.createElement('div');
+          const st = r.status === 'WAITING' ? ('Waiting (' + r.joined_count + '/' + r.required_students + ')') : (r.status + ' • Concept ' + r.current_concept_id);
+          info.innerHTML = '<div style="font-size:14px;font-weight:700;">Room ' + r.room_code + '</div><div style="font-size:12px;color:#94a3b8;">' + st + ' • ' + r.member_names.join(', ') + '</div>';
+          const btn = document.createElement('button'); btn.className = 'smbtn'; btn.textContent = r.is_member ? 'Enter' : 'Join';
+          btn.onclick = () => joinRoom(r.room_code);
+          item.appendChild(info); item.appendChild(btn); list.appendChild(item);
+        });
+      }
+    }
+
+    async function openDashboard() {
+      stopTimers(); appMode = ''; currentRoomCode = '';
+      sessionStorage.removeItem('appMode'); sessionStorage.removeItem('roomCode');
+      showScreen('dashboard'); await loadDashboard(); dashTimer = setInterval(loadDashboard, 3000);
+    }
+
+    document.getElementById('logoutBtn').onclick = () => { stopTimers(); authToken = ''; currentUser = null; sessionStorage.clear(); showScreen('auth'); };
+    document.getElementById('startSoloBtn').onclick = startSolo;
+
+    async function startSolo() {
+      stopTimers(); appMode = 'solo'; sessionStorage.setItem('appMode', 'solo');
+      showScreen('lecture'); peersBar.classList.remove('visible'); waitingBar.classList.remove('visible'); lastKey = '';
+      const res = await fetch('/api/state'); updateSoloUI(await res.json());
+    }
+
+    function updateSoloUI(d) {
+      document.getElementById('courseTitle').textContent = d.course.code + ' — ' + d.course.title + ' (Solo)';
+      document.getElementById('conceptLabel').textContent = d.state.concept_id + ' • ' + d.state.concept_title + ' (' + d.state.phase + ')';
+      const tot = d.course.total_concepts || 1, mast = (d.progress.mastered || []).length;
+      document.getElementById('progressFill').style.width = Math.min(100, Math.round((mast / tot) * 100)) + '%';
+      document.getElementById('progressLabel').textContent = mast + ' / ' + tot + ' mastered';
+      remediationBanner.style.display = d.state.remediation_active ? 'block' : 'none';
+      renderChips('masteredList', d.progress.mastered, 'mastered');
+      renderChips('difficultList', d.progress.difficult, 'difficult');
+      renderMessages(d.messages || [], null);
+      sendBtn.disabled = false; inputEl.disabled = false;
+    }
+
+    document.getElementById('createJoinRoomBtn').onclick = () => joinRoom(document.getElementById('roomCodeInput').value.trim().toUpperCase());
+
+    async function joinRoom(code) {
+      const err = document.getElementById('dashRoomError'); err.textContent = '';
+      if (!code) { err.textContent = 'Enter a room code.'; return; }
+      const res = await fetch('/api/rooms/join', {
+        method: 'POST', headers: authHeaders(),
+        body: JSON.stringify({ room_code: code, required_students: 2 })
+      });
+      const data = await res.json();
+      if (!res.ok) { err.textContent = data.error || 'Could not join.'; return; }
+      stopTimers(); appMode = 'classroom'; currentRoomCode = data.room.room_code;
+      sessionStorage.setItem('appMode', 'classroom'); sessionStorage.setItem('roomCode', currentRoomCode);
+      lastKey = ''; handleRoom(data);
+      roomTimer = setInterval(async () => {
+        if (!currentRoomCode || !authToken || busy) return;
+        try {
+          const r = await fetch('/api/rooms/state?room_code=' + encodeURIComponent(currentRoomCode), { headers: authHeaders() });
+          if (r.ok) handleRoom(await r.json());
+        } catch (e) {}
+      }, 2000);
+    }
+
+    function handleRoom(d) {
+      currentUser = d.user; const room = d.room;
+      if (room.status === 'WAITING') {
+        showScreen('waiting');
+        document.getElementById('waitingRoomBadge').textContent = 'ROOM: ' + room.room_code + ' (' + room.joined_count + '/' + room.required_students + ')';
+        const list = document.getElementById('waitingMembers'); list.innerHTML = '';
+        room.members.forEach(m => {
+          const it = document.createElement('div'); it.className = 'mitem';
+          it.innerHTML = '<span>' + m.display_name + '</span><span style="color:#86efac;">Joined</span>';
+          list.appendChild(it);
+        });
+        return;
+      }
+      showScreen('lecture');
+      document.getElementById('courseTitle').textContent = d.course.code + ' — Room ' + room.room_code + ' (' + room.joined_count + '/' + room.required_students + ')';
+      document.getElementById('conceptLabel').textContent = room.concept_id + ' • ' + room.concept_title + ' (' + room.phase + ')';
+      const tot = d.course.total_concepts || 1, mast = (d.progress.mastered || []).length;
+      document.getElementById('progressFill').style.width = Math.min(100, Math.round((mast / tot) * 100)) + '%';
+      document.getElementById('progressLabel').textContent = mast + ' / ' + tot + ' mastered';
+
+      peersBar.classList.add('visible'); peersBar.innerHTML = '';
+      room.members.forEach(m => {
+        const p = document.createElement('span'); p.className = 'pill ' + (m.submitted_current_turn ? 'done' : '');
+        p.textContent = m.display_name + (m.submitted_current_turn ? ' (replied)' : ' (thinking)');
+        peersBar.appendChild(p);
+      });
+
+      remediationBanner.style.display = room.remediation_active ? 'block' : 'none';
+      renderChips('masteredList', d.progress.mastered, 'mastered');
+      renderChips('difficultList', d.progress.difficult, 'difficult');
+      renderMessages(d.messages || [], d.user.user_id);
+
+      if (room.current_user_submitted && room.waiting_for.length > 0 && room.phase !== 'COMPLETED') {
+        waitingBar.classList.add('visible');
+        waitingBarText.textContent = 'Answer saved. Waiting for ' + room.waiting_for.join(', ') + '...';
+        sendBtn.disabled = true; inputEl.disabled = true; inputEl.placeholder = 'Waiting for classmate...';
+      } else {
+        waitingBar.classList.remove('visible');
+        sendBtn.disabled = false; inputEl.disabled = false; inputEl.placeholder = 'Type your reply...';
+      }
+    }
+
+    async function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text || busy) return;
+      busy = true; sendBtn.disabled = true; inputEl.value = ''; inputEl.style.height = 'auto'; typingEl.style.display = 'block';
+      try {
+        if (appMode === 'solo') {
+          const res = await fetch('/api/message', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
+          const data = await res.json();
+          if (res.ok) updateSoloUI(data); else notice('Error: ' + (data.error || 'AI error'));
+        } else {
+          const res = await fetch('/api/rooms/message', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ room_code: currentRoomCode, message: text }) });
+          const data = await res.json();
+          if (res.ok) handleRoom(data); else notice('Error: ' + (data.error || 'AI error'));
+        }
+      } catch (e) { notice('Network error. Please try again.'); }
+      finally {
+        typingEl.style.display = 'none'; busy = false;
+        if (!inputEl.disabled) { sendBtn.disabled = false; inputEl.focus(); }
+      }
+    }
+
+    document.getElementById('forceContinueBtn').onclick = async () => {
+      if (busy) return; busy = true; typingEl.style.display = 'block';
+      try {
+        const res = await fetch('/api/rooms/force_continue', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ room_code: currentRoomCode }) });
+        const data = await res.json();
+        if (res.ok) handleRoom(data); else notice('Error: ' + (data.error || 'Could not continue'));
+      } finally { typingEl.style.display = 'none'; busy = false; }
+    };
+
+    document.getElementById('leaveWaitingBtn').onclick = openDashboard;
+    document.getElementById('dashNavBtn').onclick = openDashboard;
+    inputEl.oninput = () => { inputEl.style.height = 'auto'; inputEl.style.height = Math.min(inputEl.scrollHeight, 110) + 'px'; };
+    inputEl.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
+    sendBtn.onclick = sendMessage;
+    document.getElementById('progressBtn').onclick = () => modalBackdrop.classList.add('open');
+    document.getElementById('closeModalBtn').onclick = () => modalBackdrop.classList.remove('open');
+    modalBackdrop.onclick = (e) => { if (e.target === modalBackdrop) modalBackdrop.classList.remove('open'); };
+
+    document.getElementById('resetBtn').onclick = async () => {
+      if (!confirm('Reset this class and start fresh?')) return;
+      modalBackdrop.classList.remove('open'); lastKey = '';
+      if (appMode === 'solo') {
+        const res = await fetch('/api/reset', { method: 'POST' }); updateSoloUI(await res.json());
+      } else {
+        const res = await fetch('/api/rooms/reset', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ room_code: currentRoomCode }) });
+        handleRoom(await res.json());
+      }
+    };
+
+    (async function boot() {
+      if (!authToken) { showScreen('auth'); return; }
+      if (appMode === 'solo') { await startSolo(); return; }
+      if (appMode === 'classroom' && currentRoomCode) { await joinRoom(currentRoomCode); return; }
+      await openDashboard();
+    })();
+  </script>
+</body>
+</html>
